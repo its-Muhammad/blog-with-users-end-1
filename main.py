@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask, render_template, redirect, url_for, flash, abort
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
@@ -16,7 +14,7 @@ import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("Secret_Key")
 ckeditor = CKEditor(app)
-#8BYkEfBA6O6donzWlSihBXox7C0sKR6b
+# 8BYkEfBA6O6donzWlSihBXox7C0sKR6b
 Bootstrap(app)
 gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=False, force_lower=False, use_ssl=False,
                     base_url=None)
@@ -223,6 +221,17 @@ def delete_post(post_id):
     db.session.delete(post_to_delete)
     db.session.commit()
     return redirect(url_for('get_all_posts'))
+
+
+@app.route("/delete-comment/<int:comment_id>")
+@login_required
+def delete_comment(comment_id):
+    comment_to_delete = Comment.query.get(comment_id)
+    post_id = comment_to_delete.post_id
+    print(post_id)
+    db.session.delete(comment_to_delete)
+    db.session.commit()
+    return redirect(url_for('show_post', post_id=post_id))
 
 
 if __name__ == "__main__":
